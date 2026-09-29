@@ -11,6 +11,7 @@
 <h1>Personajes de Springfield</h1>
 
 <form action="${pageContext.request.contextPath}/personajes" method="get">
+<%--    formulario para hacer busquedas por eso es get y no post--%>
 
     <fieldset>
         <legend>Filtrar</legend>
@@ -54,8 +55,8 @@
     <a href="${pageContext.request.contextPath}/personajes">Limpiar filtros</a>
 </form>
 
-<p class="resumen"><strong>XXXXXXX</strong> personajes encontrados</p>
-
+<p class="resumen"><strong>${personajes.size()}</strong> personajes encontrados</p>
+<!--pendiente validar si la lista no esta vacia-->
 <table>
     <thead>
     <tr>
@@ -66,12 +67,15 @@
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
+    <c:forEach var="p" items = "${personajes}">
+        <tr>
+            <td>${p.nombreCompleto()}</td>
+            <td>${p.edad()}</td>
+            <td>${p.ocupacion()}</td>
+            <td>${p.lugar()}</td>
+        </tr>
+    </c:forEach>
+
 
     </tbody>
 </table>

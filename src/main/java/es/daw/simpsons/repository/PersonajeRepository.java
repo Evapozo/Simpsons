@@ -11,7 +11,7 @@ import java.util.List;
  *
  * Las edades son aproximadas (en la serie los personajes no envejecen).
  */
-public class PersonajeRepositorio {
+public class PersonajeRepository {
 
     // List.of() crea una lista INMUTABLE: si alguien intenta hacer add() o remove(),
     // salta una excepción. Así demostramos que los streams no tocan la lista original.
