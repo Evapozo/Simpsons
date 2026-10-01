@@ -3,6 +3,7 @@ package es.daw.simpsons.controller;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import es.daw.simpsons.model.Personaje;
 import es.daw.simpsons.servicio.PersonajeServicio;
@@ -24,32 +25,47 @@ public class PersonajesServlet extends HttpServlet {
 
     }
 
+    private static final Logger LOGGER = Logger.getLogger(PersonajesServlet.class.getName());
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
         //1.LEER PARÁMETROS DEL REQUEST
+
+
         String lugar = request.getParameter("lugar");
+        System.out.println("lugar: " + lugar);
+
         String ordenarPor = request.getParameter("ordenarPor");
-        boolean descendente = request.getParameter("descendente") != null ?
-                Boolean.parseBoolean(request.getParameter("descendente")) : false;
+        System.out.println("ordenarPor: " + ordenarPor);
+        //boolean descendente = request.getParameter("descendente") != null ?
+                //Boolean.parseBoolean(request.getParameter("descendente")) : false;
+        boolean descendente = request.getParameter("descendente") != null; //si no se marca viajará un nulo
+        System.out.println("descendente: " + descendente);
 
         //PENDIENTE!!!!deberiamos convertirlos a un entero
         String edadMax = request.getParameter("edadMax");
+        System.out.println("edadMax: " + edadMax);
+        //int edadMaxInt = Integer.parseInt(edadMax);
+        try {
+            Integer edadMaxInteger = Integer.valueOf(request.getParameter("edadMax"));
+            System.out.println("edadMax: " + edadMaxInteger);
+        }catch (NumberFormatException e){
+            LOGGER.severe(e.getMessage());
+        }
+
         String limite = request.getParameter("limite");
 
-        //2.Tratar los parámetros, conversiones y validaciones
-
-
+        //2.TRATAR LOS PARÁMETROS, CONVERSIONES Y VALIDACIONES
 
         //3.LÓGICA. NECESITO OBTENER LOS PERSONAJES DE LOS SIMPSON
         List<Personaje> personajes = servicio.buscar();
 
 
-        //4.Pasar a la vista todo lo que necesite
+        //4.PASAR A LA VISTA LO QUE NECESITE
 
         request.setAttribute("personajes", personajes);
 
-        //5.Reenviar a la vista (plantilla jsp)
+        //5.REENVIAR A LA VISTA (plantilla jsp)
         request.getRequestDispatcher("/personajes.jsp").forward(request, response);
 
 
