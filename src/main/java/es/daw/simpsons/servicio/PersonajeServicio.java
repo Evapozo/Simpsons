@@ -3,6 +3,7 @@ package es.daw.simpsons.servicio;
 import es.daw.simpsons.model.Personaje;
 import es.daw.simpsons.repository.PersonajeRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,22 +20,26 @@ public class PersonajeServicio {
      *
      * @param lugar
      * @param edadMax
-     * @param ordernaPor
+     * @param ordenarPor
      * @param descendente
      * @param limite
      * @return
      */
     public List<Personaje> buscar(String lugar,
                                   Integer edadMax,
-                                  String ordernaPor, // pendiente
+                                  String ordenarPor, // pendiente
                                   boolean descendente, // pendiente
                                   Integer limite
     ) {
 
+
         return repositorio.findAll().stream()
+                //filter deja pasar solo los que cumplen la condición
                 .filter( p -> lugar == null || lugar.isBlank() || p.lugar().equalsIgnoreCase(lugar))
                 .filter(p -> edadMax == null || p.edad() <= edadMax)
-                .sorted( (p1, p2) -> p1.nombre().compareTo(p2.nombre()))
+                //.sorted( (p1, p2) -> p1.nombre().compareTo(p2.nombre()))
+                .sorted(crearComparador(ordenarPor, descendente))
+                //.sorted(Comparator.comparing(Personaje::nombre))
                 .limit(limite == null? Integer.MAX_VALUE : limite)
                 .toList();
     }
@@ -58,5 +63,16 @@ public class PersonajeServicio {
 
     }
 
+    private Comparator<Personaje> crearComparador(String ordenarPor, boolean descendente) {
+        Comparator<Personaje> comparator = switch(ordenarPor == null ? "" : ordenarPor){
+
+            //case "edad" -> Comparator.comparingInt(p -> p.edad()); lambda
+            case "edad" -> Comparator.comparingInt(Personaje::edad).thenComparing(Personaje::nombre);
+            case "apellido" -> Comparator.comparing(Personaje::apellido).thenComparing(Personaje::nombre);
+            default -> Comparator.comparing(Personaje::nombre);
+
+        };
+        return descendente ? comparator.reversed() : comparator;
+    }
 
 }

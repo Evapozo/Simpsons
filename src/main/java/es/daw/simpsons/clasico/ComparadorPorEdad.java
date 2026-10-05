@@ -24,6 +24,7 @@ public class ComparadorPorEdad implements Comparator<Personaje> {
     public int compare(Personaje p1, Personaje p2) {
         // Negativo si p1 va antes, positivo si va después, 0 si empatan.
         int resultado = Integer.compare(p1.edad(), p2.edad());
+        // int resultado = Integer.compare(p1.getEdad(), p2.getEdad());
 
         // Si tienen la misma edad, desempatamos por nombre.
         if (resultado == 0) {
