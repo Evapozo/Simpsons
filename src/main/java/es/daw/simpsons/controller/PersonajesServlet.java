@@ -32,6 +32,10 @@ public class PersonajesServlet extends HttpServlet {
         String lugar = request.getParameter("lugar");
         System.out.println("*** lugar: " + lugar);
 
+        // MEJORA1: Leer el parámetro 'ocupacion'
+        String ocupacion = request.getParameter("ocupacion");
+        System.out.println("*** ocupacion: " + ocupacion);
+
         String ordernarPor = request.getParameter("ordernarPor");
         System.out.println("*** ordernarPor: " + ordernarPor);
 
@@ -42,6 +46,10 @@ public class PersonajesServlet extends HttpServlet {
         String edadMax = request.getParameter("edadMax");
         String limite = request.getParameter("limite");
 
+        //MEJORA 3
+        boolean soloFamilia = request.getParameter("soloFamilia") != null; //si no marca, no viaja es un nulo
+
+
         List<Personaje> personajes = new ArrayList<>(); // no es null. Es una lista vacía con 0 elementos. Está inicializada
         // ------------------------------------------------------
         // 2. TRATAR LOS PARÁMETROS. CONVERSIONES Y VALIDACIONES
@@ -51,7 +59,8 @@ public class PersonajesServlet extends HttpServlet {
 
             // 3. LÓGICA. Necesito obtener los personajes de los Simpson
             // PENDIENTE!!! enviar los parámetros de filtrado y ordenación al servicio
-            personajes = servicio.buscar(lugar,edadMaxInt,ordernarPor,descendente,limiteInt);
+            //MEJORA1. he modificado el metodo en servicio para añadir ocupacion
+            personajes = servicio.buscar(lugar,edadMaxInt, ocupacion, ordernarPor,descendente,limiteInt, soloFamilia);
 
         }catch (Exception e){
             // Escribir un mensaje de error en personajes.jsp
@@ -61,6 +70,9 @@ public class PersonajesServlet extends HttpServlet {
         // 4. PASAR A LA VISTA TODO LO QUE NECESITE
         request.setAttribute("personajes", personajes);
         request.setAttribute("lugares", servicio.lugaresDisponibles());
+
+        //MEJORA 1
+        request.setAttribute("ocupaciones", servicio.ocupacionesDisponibles());
 
         // 5. REENVIAR A LA VISTA (plantilla JSP)
         request.getRequestDispatcher("/personajes.jsp").forward(request,response);

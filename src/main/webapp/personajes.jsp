@@ -24,6 +24,15 @@
                 </c:forEach>
             </select>
         </label>
+<%-- Añadir un filtro por ocupación, que funcione igual que el de lugar.--%>
+        <label>Ocupación
+            <select name="ocupacion">
+                <option value="">— Todos —</option>
+                <c:forEach var="l" items="${ocupaciones}">
+                    <option value="${o}" ${o == param.ocupacion ? 'selected' : ''}>${o}</option>
+                </c:forEach>
+            </select>
+        </label>
 
         <label>Edad máxima
             <input type="number" name="edadMax" min="0" value="">
@@ -35,19 +44,26 @@
 
         <label>Ordenar por
             <select name="ordenarPor">
-                <option value="nombre">Nombre</option>
-                <option value="apellido">Apellido</option>
-                <option value="edad">Edad</option>
+                <option value="nombre" ${param.ordenarPor == 'nombre' ? 'selected' : ''}>Nombre</option>
+                <option value="apellido"${param.ordenarPor == 'apellido' ? 'selected' : ''}>Apellido</option>
+                <option value="edad"${param.ordenarPor == 'edad' ? 'selected' : ''}>Edad</option>
+<%-- MEJORA 2 Añadir "Ordenar por lugar" (y, si empatan, por nombre).--%>
+                <option value="lugar"${param.ordenarPor == 'lugar' ? 'selected' : ''}>Lugar</option>
             </select>
         </label>
 
         <label class="check">
-            <input type="checkbox" name="descendente" >
+            <input type="checkbox" name="descendente" ${not empty param.descendente ? 'checked' : ''}>
             Descendente
         </label>
 
+        <label class="check">
+            <input type="checkbox" name=" soloFamilia" ${not empty param.soloFamilia ? 'checked' : ''}>
+            Solo familia Simpson
+        </label>
+
         <label>Mostrar como máximo
-            <input type="number" name="limite" min="0" value="">
+            <input type="number" name="limite" min="0" value="${param.value}">
         </label>
     </fieldset>
 

@@ -20,6 +20,7 @@ public class PersonajeServicio {
      *
      * @param lugar
      * @param edadMax
+     * @param ocupacion añadir ocupacion como parámetro
      * @param ordenarPor
      * @param descendente
      * @param limite
@@ -27,9 +28,11 @@ public class PersonajeServicio {
      */
     public List<Personaje> buscar(String lugar,
                                   Integer edadMax,
+                                  String ocupacion, //NUEVO
                                   String ordenarPor, // pendiente
                                   boolean descendente, // pendiente
-                                  Integer limite
+                                  Integer limite,
+                                  boolean soloFamilia
     ) {
 
 
@@ -37,6 +40,10 @@ public class PersonajeServicio {
                 //filter deja pasar solo los que cumplen la condición
                 .filter( p -> lugar == null || lugar.isBlank() || p.lugar().equalsIgnoreCase(lugar))
                 .filter(p -> edadMax == null || p.edad() <= edadMax)
+                //MEJORA 1
+                .filter(p -> ocupacion == null || ocupacion.isBlank() || p.ocupacion().equalsIgnoreCase(ocupacion))
+                //MEJORA 3
+                .filter(p-> !soloFamilia || p.principal())
                 //.sorted( (p1, p2) -> p1.nombre().compareTo(p2.nombre()))
                 .sorted(crearComparador(ordenarPor, descendente))
                 //.sorted(Comparator.comparing(Personaje::nombre))
@@ -63,12 +70,33 @@ public class PersonajeServicio {
 
     }
 
+    /**
+     *
+     * @return
+     */
+    public List<String> ocupacionesDisponibles(){
+        return repositorio.findAll().stream()
+                .map(Personaje::ocupacion)
+                .distinct()
+                .sorted()
+                .toList();
+    }
+
+    /**
+     *
+     * @param ordenarPor
+     * @param descendente
+     * @return
+     */
     private Comparator<Personaje> crearComparador(String ordenarPor, boolean descendente) {
         Comparator<Personaje> comparator = switch(ordenarPor == null ? "" : ordenarPor){
 
             //case "edad" -> Comparator.comparingInt(p -> p.edad()); lambda
             case "edad" -> Comparator.comparingInt(Personaje::edad).thenComparing(Personaje::nombre);
             case "apellido" -> Comparator.comparing(Personaje::apellido).thenComparing(Personaje::nombre);
+
+            //MEJORA 2 Añadir "Ordenar por lugar" (y, si empatan, por nombre).
+            case "lugar" -> Comparator.comparing(Personaje::lugar).thenComparing(Personaje::nombre);
             default -> Comparator.comparing(Personaje::nombre);
 
         };
